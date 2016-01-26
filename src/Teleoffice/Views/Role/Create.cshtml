@@ -1,0 +1,18 @@
+﻿@using Teleoffice.Models
+@using Microsoft.AspNet.Identity.EntityFramework
+@model IdentityRole
+
+@{
+    ViewData["Title"] = "Create Role";
+}
+<h2>@ViewData["Title"].</h2>
+<h3>@ViewData["Message"]</h3>
+
+<form asp-controller="Role" asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="DisplayName">Name</label>
+        <input asp-for="Name" class="form-control" />
+        <span class="text-danger" asp-validation-for="Name"></span>
+    </div>
+    <button class="btn btn-default btn-primary">Save</button>
+</form>
