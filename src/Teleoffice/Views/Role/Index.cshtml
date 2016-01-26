@@ -1,0 +1,42 @@
+﻿@using Teleoffice.Models
+@using System.Collections.Generic
+@using Microsoft.AspNet.Identity.EntityFramework
+@model IEnumerable<IdentityRole>
+
+@{
+    ViewData["Title"] = "List of roles";
+}
+<h2>@ViewData["Title"].</h2>
+<h3>@ViewData["Message"]</h3>
+
+@if (Model.Count() != 0)
+{
+
+    <h2>All Roles</h2>
+    <table class="table table-striped">
+       
+        @{
+            var user= new IdentityRole();
+            int count = 1;
+        }
+
+        @foreach (var role in Model)
+        {
+                <tr>
+                    <td>@count</td>
+                    <td>@role.Name</td>
+                    @{
+                        user = role;
+                      }
+                </tr>
+                count = count + 1;
+            }
+
+        <tr>
+            <td>
+                <button type="button" class="btn btn-primary"><a asp-controller="Role" asp-action="Create" method="post" style="color:white;">Add Roles</a></button>
+
+            </td>
+            </tr>
+        </table>
+        }

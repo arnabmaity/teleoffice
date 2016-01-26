@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Authorization;
 
 namespace Teleoffice.Controllers
 {
@@ -12,7 +13,7 @@ namespace Teleoffice.Controllers
         {
             return View();
         }
-
+        
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
@@ -31,5 +32,7 @@ namespace Teleoffice.Controllers
         {
             return View();
         }
+
+       
     }
 }
