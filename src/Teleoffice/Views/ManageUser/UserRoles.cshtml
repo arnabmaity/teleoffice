@@ -1,0 +1,40 @@
+﻿@using Teleoffice.Models
+@model dynamic
+
+@{
+    ViewData["Title"] = "Manage Roles";
+}
+<h2>@ViewData["Title"].</h2>
+<h3>@ViewData["Message"]</h3>
+
+<h4>User : @Model.user.UserName </h4>
+
+@if (Model.userroles.Count > 0)
+{
+    <h5>Following are the roles of the user</h5>
+    <table class="table table-striped">
+        <tr>
+            <th>Sr. No.</th>
+            <th>Role</th>
+            <th>Action</th>
+        </tr>
+        @{
+
+            int count = 1;
+        }
+        @foreach (var role in Model.userroles)
+        {
+            <tr>
+                <td>@count</td>
+                <td>@role.Name</td>
+                <td>
+                    @Html.ActionLink("Delete", "DeleteUserRole", "ManageUser", new { id = Model.user.Id, roleid = role.Id }, new { @class = "btn btn-danger" })
+                </td>
+            </tr>
+            count = count + 1;
+        }
+    </table>
+            }
+
+
+@Html.ActionLink("Assign Role", "AddUserRole", "ManageUser", new { id = Model.user.Id }, new { @class = "btn btn-primary" })

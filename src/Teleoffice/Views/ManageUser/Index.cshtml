@@ -1,0 +1,82 @@
+﻿@*@using Teleoffice.Models
+@model dynamic
+
+
+<h4>@{
+    ViewData["Title"] = "Manage Users for this Firm";
+}</h4>
+<h2>@ViewData["Title"].</h2>
+<h3>@ViewData["Message"]</h3>
+
+@if (Model.users.count > 0)
+{
+    <h2>All Users</h2>
+    <table class="table table-striped">
+        <tr>
+            <th>Sr. No.</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role Assigned</th>
+        </tr>
+        @{
+
+            int count = 1;
+        }
+
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@count</td>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                
+                <td>
+                    
+                    </td>
+                <td>
+                    @Html.ActionLink("Change Role", "UserRoles", "ManageUser", new { id = @user.Id }, new { @class = "btn btn-primary" })
+                </td>
+            </tr>
+            count = count + 1;
+        }
+    </table>
+            }*@
+
+@using Teleoffice.Models
+@model IEnumerable<Teleoffice.Models.ApplicationUser>
+
+@{
+    ViewData["Title"] = "Manage Users for this firm..";
+}
+<h2>@ViewData["Title"].</h2>
+<h3>@ViewData["Message"]</h3>
+
+@if (Model.Count() != 0)
+{
+    <h2>All Users</h2>
+    <table class="table table-striped">
+        <tr>
+            <th>Sr. No.</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        @{
+
+            int count = 1;
+        }
+
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@count</td>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>
+                    @Html.ActionLink("Add Roles", "UserRoles", "ManageUser", new { id = @user.Id }, new { @class = "btn btn-primary" })
+                </td>
+            </tr>
+            count = count + 1;
+        }
+    </table>
+            }

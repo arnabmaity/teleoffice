@@ -1,0 +1,25 @@
+﻿@using Teleoffice.Models
+@model dynamic
+
+@{
+    ViewData["Title"] = "Manage Roles";
+}
+<h2>@ViewData["Title"].</h2>
+<h3>@ViewData["Message"]</h3>
+
+<h4>User : @Model.user.UserName </h4>
+
+<form asp-controller="ManageUser" asp-action="AddUserRole" method="post">
+    <div class="form-group">
+        <input hidden id="UserId" name="UserId" type="text" value="@Model.user.Id" />
+        <label for="RoleId">Role</label>
+        <select class="form-control" name="RoleId">
+            @foreach (var role in Model.roles)
+            {
+                <option value="@role.Id">@role.Name</option>
+
+            }
+        </select>
+    </div>
+    <button class="btn btn-default btn-primary">Save</button>
+</form>

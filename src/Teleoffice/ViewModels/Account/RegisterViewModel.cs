@@ -9,6 +9,12 @@ namespace Teleoffice.ViewModels.Account
     public class RegisterViewModel
     {
         [Required]
+        public String FirstName { get; set; }
+
+        [Required]
+        public String LastName { get; set; }
+
+        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }

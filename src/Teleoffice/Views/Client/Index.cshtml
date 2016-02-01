@@ -1,0 +1,54 @@
+﻿@using Teleoffice.Models
+@model dynamic
+
+@{
+    ViewData["Title"] = "Client";
+}
+<h3>Welcome @Model.user.FirstName @Model.user.LastName</h3>
+
+<div class="row">
+    <div class="col-sm-7">
+        <h4>Your Appointments</h4>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                No appointments found
+            </div>
+        </div>
+        <button class="btn btn-primary">Book Appointment</button>
+    </div>
+    <div class="col-sm-5">
+        <div class="panel panel-default">
+            <div class="panel-heading">Notifications</div>
+            <div class="panel-body">
+                @if (Model.notifications.Count > 0)
+            {
+                    <ul class="list-group">
+
+                        @foreach (var n in Model.notifications)
+                {
+                            <li class="list-group-item notification-li">
+                                <div class="row">
+                                    <div class="col-sm-10">
+                                        @n.Message<br /><em>@n.ReceivedTime</em>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        @Html.ActionLink("X", "Read", "Notification", new { id = @n.Id }, new { @class = "btn btn-default notification-read" })
+                                    </div>
+                                </div>
+                            </li>
+
+                        }
+                    </ul>
+                }
+                else {
+                    <p class="text-center">No new notification!</p>
+
+                }
+                @Html.ActionLink("View All", "Index", "Notification", new { id = "None" }, new { @class = "btn btn-default" })
+
+            </div>
+        </div>
+
+    </div>
+
+</div>

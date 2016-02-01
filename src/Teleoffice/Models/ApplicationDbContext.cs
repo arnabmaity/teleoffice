@@ -10,6 +10,9 @@ namespace Teleoffice.Models
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+
+        public DbSet<Notification> Notifications { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -18,5 +21,6 @@ namespace Teleoffice.Models
             // Add your customizations after calling base.OnModelCreating(builder);
         }
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
+       // public DbSet<ManageUser> ManageUser { get; set; }
     }
 }
