@@ -8,9 +8,10 @@ using Teleoffice.Models;
 namespace Teleoffice.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160202074333_New")]
+    partial class New
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -150,26 +151,6 @@ namespace Teleoffice.Migrations
                     b.HasAnnotation("Relational:TableName", "AspNetUsers");
                 });
 
-            modelBuilder.Entity("Teleoffice.Models.Appointment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("ClientId");
-
-                    b.Property<int>("IsValid");
-
-                    b.Property<DateTime>("MeetingTime");
-
-                    b.Property<string>("Message");
-
-                    b.Property<string>("ProfessionalId");
-
-                    b.Property<string>("Subject");
-
-                    b.HasKey("Id");
-                });
-
             modelBuilder.Entity("Teleoffice.Models.Notification", b =>
                 {
                     b.Property<int>("Id")
@@ -218,17 +199,6 @@ namespace Teleoffice.Migrations
                     b.HasOne("Teleoffice.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("Teleoffice.Models.Appointment", b =>
-                {
-                    b.HasOne("Teleoffice.Models.ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ClientId");
-
-                    b.HasOne("Teleoffice.Models.ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ProfessionalId");
                 });
 
             modelBuilder.Entity("Teleoffice.Models.Notification", b =>

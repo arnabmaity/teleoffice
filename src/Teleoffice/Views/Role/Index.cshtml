@@ -16,7 +16,7 @@
     <table class="table table-striped">
        
         @{
-            var user= new IdentityRole();
+            var user = new IdentityRole();
             int count = 1;
         }
 
@@ -31,12 +31,16 @@
                 </tr>
                 count = count + 1;
             }
-
+        <br>
         <tr>
-            <td>
+            @*<td>
                 <button type="button" class="btn btn-primary"><a asp-controller="Role" asp-action="Create" method="post" style="color:white;">Add Roles</a></button>
-
+            </td>*@
+            <td><br>
+                @Html.ActionLink("Add Roles", "Create", "Role", new { id = "none" }, new { @class = "btn btn-primary" })
+           
             </td>
             </tr>
         </table>
         }
+

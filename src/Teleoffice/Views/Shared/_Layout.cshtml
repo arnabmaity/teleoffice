@@ -66,6 +66,27 @@
             <script src="~/js/site.min.js" asp-append-version="true"></script>
         </environment>
 
+
+        <script>
+            $(document).ready(function () {
+                //Code to do ajax request to nofication controller. It will mark notification read
+                //Remove the element then from dom
+                $('.notification-read').click(function (event) {
+                    event.preventDefault();
+                    var elem = $(this);
+                    $.get($(this).attr('href'), function (data, status) {
+                        if (status == "success") {
+                            elem.closest('.notification-li').remove();
+                        }
+                        else {
+                            alert("Server responded with "+status);
+                        }
+                    });
+                });
+                //Next code
+            });
+        </script>
+
         @RenderSection("scripts", required: false)
     </body>
 </html>

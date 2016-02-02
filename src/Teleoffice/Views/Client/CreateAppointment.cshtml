@@ -1,0 +1,21 @@
+﻿@using Teleoffice.Models
+@model dynamic
+
+@{
+    ViewData["Title"] = "Client";
+}
+<h3>Welcome @Model.user.FirstName @Model.user.LastName</h3>
+<h4>Create new appointment with - @Model.prof.FirstName @Model.prof.LastName</h4>
+<form asp-controller="Client" asp-action="CreateAppointment" method="post">
+    <div class="form-group">
+        <input hidden id="ProfessionalId" name="ProfessionalId" type="text" value="@Model.prof.Id" />
+        <input hidden id="ClientId" name="ClientId" type="text" value="@Model.client.Id" />
+        <label for="Subject">Subject</label>
+        <input id="Subject" name="Subject" class="form-control" />
+        <label for="Message">Message</label>
+        <textarea id="Message" name="Message" class="form-control"></textarea>
+        <label for="MeetingTime">Date Time</label>
+        <input id="MeetingTime" name="MeetingTime" class="form-control" />
+    </div>
+    <button class="btn btn-default btn-primary">Submit</button>
+</form>

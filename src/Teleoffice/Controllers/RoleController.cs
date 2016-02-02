@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
-
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Teleoffice.Models;
@@ -22,9 +21,8 @@ namespace Teleoffice.Controllers
         // GET: /<controller>/
         public IActionResult Index()
         {
-
-           var roles = context.Roles.OrderBy(r => r.Name).ToArray();
-           return View(roles);
+            var roles = context.Roles.OrderBy(r => r.Name).ToArray();
+            return View(roles);
         }
 
         [HttpGet]

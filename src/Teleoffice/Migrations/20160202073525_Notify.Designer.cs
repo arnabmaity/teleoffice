@@ -8,8 +8,8 @@ using Teleoffice.Models;
 namespace Teleoffice.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20160131100407_Newdata")]
-    partial class Newdata
+    [Migration("20160202073525_Notify")]
+    partial class Notify
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -153,7 +153,8 @@ namespace Teleoffice.Migrations
 
             modelBuilder.Entity("Teleoffice.Models.Notification", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("IsDeleted");
 
