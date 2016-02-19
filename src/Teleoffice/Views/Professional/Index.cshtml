@@ -1,10 +1,12 @@
 ﻿@using Teleoffice.Models
-@model dynamic
+@using Teleoffice.ViewModels.Professional
+@model DeclineMessageViewModel
 
 @{
     ViewData["Title"] = "Professional";
 }
-<h3>Welcome @Model.user.FirstName @Model.user.LastName</h3>
+
+<h3>Welcome @Model.Users.FirstName @Model.Users.LastName</h3>
 
 <div class="row">
     <div class="col-sm-7">
@@ -19,27 +21,110 @@
         <div class="panel panel-default">
             <div class="panel-heading">Notifications</div>
             <div class="panel-body">
-                @if (Model.notifications.Count > 0)
+                @if (Model.Notifications.Count > 0)
             {
                     <ul class="list-group">
 
-                        @foreach (var n in Model.notifications)
-                {
-                            <li class="list-group-item notification-li">
-                                <div class="row">
-                                    <div class="col-sm-10">
-                                        @n.Message<br /><em>@n.ReceivedTime</em>
+                        @foreach (var n in Model.Notifications)
+                        {
+                           <li class="list-group-item notification-li">
+                               @if (n.IsApproved != 3)
+                           {
+                                <div class="row">                                   
+                                    <div class="col-sm-10">                                       
+                                        <div class="col-sm-8">
+                                           @n.Message <br>
+                                            <em>@n.ReceivedTime</em>
+
+                                                @*// its getting the message from ClientController -> Notification -> Prof *@
+                                            
+                                         </div>
+
+                                        <div class="col-sm-2">
+                                            @Html.ActionLink("X", "Read", "Notification", new { id = @n.Id }, new { @class = "btn btn-default notification-read" })
+                                        </div>
+
                                     </div>
-                                    <div class="col-sm-2">
-                                        @Html.ActionLink("X", "Read", "Notification", new { id = @n.Id }, new { @class = "btn btn-default notification-read" })
+                                                                                
+                                    <div class="col-sm-10">
+
+                                        @if (n.IsApproved == 0)
+                                        {
+
+                                            <br>
+                                            <div class="col-sm-4">
+                                                @Html.ActionLink("Accept", "Accept", "Professional", new { id = @n.Id }, new { @class = "btn btn-default accept" })
+                                            </div>
+                                            <div class="col-sm-4">
+                                                @*@Html.ActionLink("Decline", "Decline", "Professional", new { id = @n.Id }, new { @class = "btn btn-default decline" })*@
+                                                 <button type="button" class="btn btn-default " id= "@n.Id">Decline</button>                                                                          
+                                            </div>
+                                            <!-- Trigger the modal with a button -->
+                                            <!-- Modal -->
+
+                                            <div class="modal fade" id="myModal" role="dialog">
+                                                <div class="modal-dialog">
+
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header" style="padding:35px 50px;">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h4><span class="glyphicon glyphicon-lock"></span>Decline with a message</h4>
+                                                        </div>
+                                                        <div class="modal-body" style="padding:40px 50px;">
+                                                            <form asp-controller="Professional" asp-action="Decline" method="post">
+                                                                <div class="form-group">
+                                                                   
+                                                                    <input hidden asp-for="ProfessionalId" type="text" value="@Model.Users.Id" />
+                                                                    <input hidden id="id" name="id" type="text" value="@n.Id" />
+                                                                    <label for="Message"><span class="glyphicon glyphicon-user"></span>Message</label>
+                                                                    <input asp-for="Message" class="form-control"  placeholder="Enter your message" />
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="Time"><span class="glyphicon glyphicon-eye-open"></span>Preferred time </label>
+                                                                    <input asp-for="Time" class="form-control"  placeholder="Enter your preferred time " />
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <div class="row">
+                                                                        <div class="col-sm-8">
+                                                                            <div class="col-sm-4">
+                                                                                <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span>Send</button>
+                                                                            </div>
+                                                                            <div class="col-sm-4">
+                                                                                <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+<script>
+        $(document).ready(function () {
+            $("#@n.Id").click(function () {
+                $("#myModal").modal();
+            });
+        });
+</script>
+                                        }
                                     </div>
                                 </div>
+
+                                }
+
                             </li>
 
-                        }
+                            }
                     </ul>
-                }
-                else {
+                            }
+
+                        else {
                     <p class="text-center">No new notification!</p>
 
                 }
@@ -51,3 +136,5 @@
     </div>
 
 </div>
+
+ 

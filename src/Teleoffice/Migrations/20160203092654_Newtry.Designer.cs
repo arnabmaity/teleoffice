@@ -8,9 +8,10 @@ using Teleoffice.Models;
 namespace Teleoffice.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160203092654_Newtry")]
+    partial class Newtry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -107,8 +108,6 @@ namespace Teleoffice.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
-                    b.Property<int>("Contact");
-
                     b.Property<string>("Email")
                         .HasAnnotation("MaxLength", 256);
 
@@ -116,15 +115,11 @@ namespace Teleoffice.Migrations
 
                     b.Property<string>("FirstName");
 
-                    b.Property<string>("Gender");
-
                     b.Property<string>("LastName");
 
                     b.Property<bool>("LockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
-
-                    b.Property<string>("MiddleName");
 
                     b.Property<string>("NormalizedEmail")
                         .HasAnnotation("MaxLength", 256);
@@ -176,30 +171,12 @@ namespace Teleoffice.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("Teleoffice.Models.DeclineMessage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Message");
-
-                    b.Property<int>("NotificationId");
-
-                    b.Property<int>("ProfessionalId");
-
-                    b.Property<DateTime>("Time");
-
-                    b.HasKey("Id");
-                });
-
             modelBuilder.Entity("Teleoffice.Models.Notification", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("AppointmentId");
-
-                    b.Property<int>("IsApproved");
+                    b.Property<int>("IsDeleted");
 
                     b.Property<string>("Message");
 

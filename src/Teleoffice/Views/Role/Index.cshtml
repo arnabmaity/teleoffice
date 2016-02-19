@@ -25,6 +25,9 @@
                 <tr>
                     <td>@count</td>
                     <td>@role.Name</td>
+                    <td>
+                        <br>@Html.ActionLink("Delete", "DeleteRole", "Role", new { name = @role.Name }, new { @class = "btn btn-danger"})
+                    </td>
                     @{
                         user = role;
                       }
@@ -40,6 +43,10 @@
                 @Html.ActionLink("Add Roles", "Create", "Role", new { id = "none" }, new { @class = "btn btn-primary" })
            
             </td>
+            <td><br />
+                @Html.ActionLink("Manage Users", "Index", "ManageUser", new { id = "none"}, new { @class = "btn btn-primary" })
+            </td>
+            
             </tr>
         </table>
         }

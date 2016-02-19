@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Teleoffice.Models;
@@ -10,6 +11,7 @@ using Teleoffice.Models;
 
 namespace Teleoffice.Controllers
 {
+    //[Authorize(Roles = "Administrator")]
     public class RoleController : Controller
     {
         private ApplicationDbContext context;
@@ -51,5 +53,11 @@ namespace Teleoffice.Controllers
 
         }
 
+        [Authorize (Roles ="Administrator")]
+        public IActionResult DeleteRole()
+        {
+            //add some content here
+            return RedirectToAction(nameof(RoleController.Index), "Role");
+        }
     }
 }

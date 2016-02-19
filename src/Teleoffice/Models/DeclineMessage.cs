@@ -6,17 +6,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Teleoffice.Models
 {
-    public class Notification
+    public class DeclineMessage
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        public int ProfessionalId { get; set; }
+        public int NotificationId { get; set; }
         public String Message { get; set; }
-        public DateTime ReceivedTime { get; set; }
-        public int Read { get; set; }
-        public int IsApproved { get; set; }
-        public int AppointmentId { get; set; }
-
-        public String UserId { get; set; }
-        public ApplicationUser User { get; set; }
+        public DateTime Time { get; set; }
+        
     }
 }

@@ -11,23 +11,43 @@
         <h4>Your Appointments</h4>
         <div class="panel panel-default">
             <div class="panel-body">
-                No appointments found
-            </div>
-        </div>
-        <form asp-controller="Client" asp-action="CreateAppointment" method="get">
-            <div class="form-group">
-                <label for="ProfessionalId">Whom to book appointment with?</label>
-                <select class="form-control" name="ProfId">
-                    @foreach (var pro in Model.pros)
-                    {
-                        <option value="@pro.Id">@pro.FirstName @pro.LastName</option>
+    @if (Model.prof.Count > 0)
+    {
+        <ul class="list-group">
 
+            @foreach (var p in Model.prof)
+            {
+            
+                <li class="list-group-item notif">
+                    <div class="row">
+                        <div class="col-sm-12">
+                           <p class="text-center">Your appointment is fixed with @p.FirstName @p.LastName on @*@a.MeetingTime*@<br />
+                        </div>
+                        </div>
+                    </li>
+                }
+                      
+            </ul>
+    }
+    else {
+                <p class="text-center" > No appointments found</p>
                     }
-                </select>
-            </div>
-            <button class="btn btn-default btn-primary">Book Appointment</button>
-        </form>
-    </div>
+                    </div>
+        </div>
+                                                <form asp-controller="Client" asp-action="CreateAppointment" method="get">
+                                                    <div class="form-group">
+                                                        <label for="ProfessionalId">Whom to book appointment with?</label>
+                                                        <select class="form-control" name="ProfId">
+                                                            @foreach (var pro in Model.pros)
+                    {
+                                                                <option value="@pro.Id">@pro.FirstName @pro.LastName</option>
+
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <button class="btn btn-default btn-primary">Book Appointment</button>
+                                                </form>
+</div>
     <div class="col-sm-5">
         <div class="panel panel-default">
             <div class="panel-heading">Notifications</div>
@@ -46,6 +66,13 @@
                                     <div class="col-sm-2">
                                         @Html.ActionLink("X", "Read", "Notification", new { id = @n.Id }, new { @class = "btn btn-default notification-read" })
                                     </div>
+
+                                    
+                                    @if (n.IsApproved == 2)
+                                    {
+                                    <br>@Html.ActionLink("Agree", "Agree", "Client", new { id = @n.Id }, new { @class = "btn btn-default" })
+                                        @Html.ActionLink("Request Again", "RequestAgain", "Client", new { id = n.Id }, new {@class = "btn btn-primary" })
+                                    }
                                 </div>
                             </li>
 

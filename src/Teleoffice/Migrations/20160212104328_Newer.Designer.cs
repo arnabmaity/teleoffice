@@ -8,9 +8,10 @@ using Teleoffice.Models;
 namespace Teleoffice.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160212104328_Newer")]
+    partial class Newer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -156,6 +157,20 @@ namespace Teleoffice.Migrations
                     b.HasAnnotation("Relational:TableName", "AspNetUsers");
                 });
 
+            modelBuilder.Entity("Teleoffice.Models.AppNotify", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("AppointmentId");
+
+                    b.Property<int>("NotificationId");
+
+                    b.Property<string>("UserId");
+
+                    b.HasKey("Id");
+                });
+
             modelBuilder.Entity("Teleoffice.Models.Appointment", b =>
                 {
                     b.Property<int>("Id")
@@ -176,28 +191,10 @@ namespace Teleoffice.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("Teleoffice.Models.DeclineMessage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Message");
-
-                    b.Property<int>("NotificationId");
-
-                    b.Property<int>("ProfessionalId");
-
-                    b.Property<DateTime>("Time");
-
-                    b.HasKey("Id");
-                });
-
             modelBuilder.Entity("Teleoffice.Models.Notification", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<int>("AppointmentId");
 
                     b.Property<int>("IsApproved");
 
@@ -239,6 +236,13 @@ namespace Teleoffice.Migrations
                         .WithMany()
                         .HasForeignKey("RoleId");
 
+                    b.HasOne("Teleoffice.Models.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("Teleoffice.Models.AppNotify", b =>
+                {
                     b.HasOne("Teleoffice.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId");

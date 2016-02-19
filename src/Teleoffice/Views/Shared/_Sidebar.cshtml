@@ -1,0 +1,67 @@
+﻿@using System.Collections.Generic
+@using Microsoft.AspNet.Http
+@using Microsoft.AspNet.Http.Authentication
+@model LoginViewModel
+@inject SignInManager<ApplicationUser> SignInManager
+
+
+<div id="sidebar" class="col-sm-4">
+    <br><br><br />
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Login</h3>
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal" role="form" asp-controller="Account" asp-action="Login" method="post">
+                <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3" asp-for="Email">Email</label>
+                    <div class="col-sm-9">
+                        <input asp-for="Email" class="form-control"placeholder="Enter email"/>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password" class="control-label col-sm-3" >Password</label>
+                    <div class="col-sm-9">
+                        <input asp-for="Password" class="form-control"  placeholder="Enter password">
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                     </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        &nbsp;
+                    </div>
+                    <div class="col-sm-9">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                </div>
+            </form>
+            <p><a asp-controller="Account" asp-action="ForgotPassword"> Forgot Password?</a></p>
+            <p><a asp-controller="Account" asp-action="Register"> Don't have account? Register here!</a></p>
+        </div>
+    </div><br>
+    <div class="panel panel-default">
+        <!--  panel start -->
+        <div class="panel-heading">
+            <h3 class="panel-title">Our Team</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr><th>Name</th><th>Rank</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Harry Potter</td><td>Junior</td></tr>
+                    <tr><td>Ron Weasley</td><td>Junior</td></tr>
+                    <tr><td>Hermione Granger</td><td>Junior</td></tr>
+                    <tr><td>Albus Dumbledore</td><td>Senior</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div><!-- panel end -->
+</div><!-- #sidebar -->
+       
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

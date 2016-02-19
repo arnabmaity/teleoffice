@@ -33,6 +33,11 @@ namespace Teleoffice.Controllers
             return View();
         }
 
+        public IActionResult Feedback()
+        {
+            return View();
+        }
+
        
     }
 }

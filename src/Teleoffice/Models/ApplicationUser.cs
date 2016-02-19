@@ -10,7 +10,10 @@ namespace Teleoffice.Models
     public class ApplicationUser : IdentityUser
     {
         public String FirstName { get; set; }
+        public String MiddleName { get; set; }
         public String LastName { get; set; }
+        public int Contact { get; set; }
+        public String Gender { get; set; }
 
         public List<Notification> Notifications { get; set; }
         public ApplicationUser()
