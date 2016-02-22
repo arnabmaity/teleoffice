@@ -13,7 +13,8 @@ namespace Teleoffice.Models
         public String Message { get; set; }
         public DateTime ReceivedTime { get; set; }
         public int Read { get; set; }
-        public int IsDeleted { get; set; }
+        public int IsApproved { get; set; }
+        public int AppointmentId { get; set; }
 
         public String UserId { get; set; }
         public ApplicationUser User { get; set; }

@@ -1,0 +1,96 @@
+﻿@using Teleoffice.Models
+@using System.Collections.Generic
+@using Microsoft.AspNet.Identity.EntityFramework
+@model dynamic
+
+@{
+    ViewData["Title"] = "Appointment";
+}
+<style>
+    #main video {
+        width: 640px;
+        height: 480px;
+        margin: 0px;
+        padding: 10px;
+    }
+
+    #preview video {
+        margin: 0px;
+        width: 160px;
+        height: 160px;
+        padding: 5px;
+    }
+</style>
+<h2>@ViewData["Title"].</h2>
+<h3>@Model.app.Subject</h3>
+
+<div id="main"></div>
+<div id="preview"></div>
+
+<script src="http://code.jquery.com/jquery-2.2.0.js"></script>
+<script type="text/javascript" src="https://api.bistri.com/bistri.conference.min.js"></script>
+
+<script type="text/javascript">
+        onBistriConferenceReady = function(){
+            var localStream;
+            var remoteStream;
+
+            // initialize API client with application keys
+            // if you don't have your own, you can get them at:
+            // https://api.developers.bistri.com/login
+            bc.init({
+                appId: "9d36c6ec",
+                appKey: "302d794a522a59e67a237020ddb0f6ac"
+            });
+
+            // test if the browser is WebRTC compatible
+            if (!bc.isCompatible()) {
+                // if the browser is not compatible, display an alert
+                alert("your browser is not WebRTC compatible !");
+                // then stop the script execution
+                return;
+            }
+
+            /* Set events handler */
+
+            // when local user is connected to the server
+            bc.signaling.bind("onConnected", function () {
+                // ask the user to access to his webcam and set the resolution to 320x240
+                bc.startStream("webcam-sd", function (stream) {
+                    // set "localStream" variable with the local stream
+                    localStream = stream;
+                    // insert the local webcam stream into the page body, mirror option invert the display
+                    bc.attachStream(stream, document.getElementById('preview'), { mirror: true });
+                    // join a conference room called "conference_demo" and limit conference to 4 participants
+                    bc.joinRoom("conf_@Model.app.Id", 4);
+                });
+            });
+
+            // when the user has joined a room
+            bc.signaling.bind("onJoinedRoom", function (result) {
+                // set room members array in a var "roomMembers"
+                var roomMembers = result.members;
+                // then, for every single members already present in the room ...
+                for (var i = 0, max = roomMembers.length; i < max; i++) {
+                    // ... request a call
+                    bc.call(roomMembers[i].id, "conf_@Model.app.Id", { stream: localStream });
+                }
+            });
+
+            // when a new remote stream is received
+            bc.streams.bind("onStreamAdded", function (remoteStream) {
+                // insert the new remote stream into the page body
+                bc.attachStream(remoteStream, document.getElementById('main'));
+            });
+
+            // when a stream has been stopped
+            bc.streams.bind("onStreamClosed", function (stream) {
+                // remove the stream from the page
+                bc.detachStream(stream);
+            });
+
+            // open a new session on the server
+            bc.connect();
+        }
+</script>
+

@@ -12,12 +12,21 @@ using Microsoft.Extensions.Logging;
 using Teleoffice.Models;
 using Teleoffice.Services;
 using Teleoffice.ViewModels.Account;
+using System.Dynamic;
 
 namespace Teleoffice.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
+
+
+        //public AccountController(ApplicationDbContext _context)
+        //{
+        //    context = _context;
+        //}
+        //
+        private ApplicationDbContext context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
@@ -29,27 +38,19 @@ namespace Teleoffice.Controllers
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
             ISmsSender smsSender,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory,
+            ApplicationDbContext _context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
             _logger = loggerFactory.CreateLogger<AccountController>();
+            context = _context;
         }
 
-        //
-        // GET: /Account/Login
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult Login(string returnUrl = null)
-        {
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
-        }
 
-        //
-        // POST: /Account/Login
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -60,16 +61,40 @@ namespace Teleoffice.Controllers
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation(1, "User logged in.");
-                    return RedirectToLocal(returnUrl);
+
+                    ////i'm just trying this
+                    ////dynamic dy = new ExpandoObject();
+                    var user = context.Users.Where(z => z.Email == model.Email).Single();
+                    var roleid = context.UserRoles.Where(z => z.UserId == user.Id).Single();
+                    var userrole = context.Roles.Where(z => z.Id == roleid.RoleId).Single();
+                    String role = userrole.Name.ToString();
+
+                    if(role == "Administrator")
+                    {
+                        return RedirectToAction(nameof(RoleController.Index), "Role");
+                    }
+
+                    if(role == "Professional")
+                    {
+                        return RedirectToAction(nameof(ProfessionalController.Index), "Professional");
+                    }
+                    
+                    if(role == "Client")
+                    {
+                        return RedirectToAction(nameof(ClientController.Index), "Client");
+                    }                             
+                                 
+                   
+
                 }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                }
+                //if (result.RequiresTwoFactor)
+                //{
+                //    return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                //}
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning(2, "User account locked out.");
@@ -78,13 +103,19 @@ namespace Teleoffice.Controllers
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return View(model);
+                    return RedirectToAction(nameof(HomeController.Index), "Home");
                 }
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            else
+            {
+                return RedirectToAction(nameof(HomeController.Index),"Home");
+            }
+            
         }
+
+
 
         //
         // GET: /Account/Register
@@ -104,7 +135,7 @@ namespace Teleoffice.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, MiddleName = model.MiddleName, LastName = model.LastName, Gender = model.Gender, Contact = model.Contact };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

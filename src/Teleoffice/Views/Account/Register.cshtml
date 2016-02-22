@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Register";
 }
-
+@*  
 <h2>@ViewData["Title"].</h2>
 
 <form asp-controller="Account" asp-action="Register" method="post" class="form-horizontal" role="form">
@@ -56,4 +56,101 @@
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-}
+}*@
+<br>
+<div class="container">
+    <div class="row">
+        <div id="content" class="col-sm-8">
+            <h3>Sign Up</h3><br>
+            <p>Please fill the following details to avail the services of this application</p>
+            <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>    
+        
+        <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">User Details</h3>
+                </div>
+                <div class="panel-body">
+                    <form class="form-horizontal" role="form" asp-controller="Account" asp-action="Register" method="post">
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Full Name:</label>
+                            <div class="col-sm-3">
+                                <input asp-for="FirstName" class="form-control" placeholder="First Name"/>
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="col-sm-3">
+                                <input asp-for="MiddleName" class="form-control" placeholder="Middle Name" />
+                                <span asp-validation-for="MiddleName" class="text-danger"></span>
+                            </div>
+                            <div class="col-sm-3">
+                                <input asp-for="LastName"  class="form-control" placeholder="Last Name"/>
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Gender:</label>
+                            <div class="col-sm-2">
+                                <input asp-for="Gender" type="radio"  value="female">   Female
+                            </div>
+                            <div class="col-sm-2">
+                                <input asp-for="Gender" type="radio"  value="male">      Male
+                                <span asp-validation-for="Gender" class="text-danger"></span>
+                            </div>
+                        </div>
+                        @*<div class="form-group">
+                            <label class="control-label col-sm-3">User Type:</label>
+                            <div class="col-sm-3">
+                                <select class="form-control" id="type" name="type">
+                                    <option value="client">Client</option>
+                                    <option value="junior">Junior</option>
+                                    <option value="senior">Senior Lead</option>
+                                </select>
+                            </div>
+                        </div>*@
+                        <div class="form-group">
+                            <label class="control-label col-sm-3" asp-for="Email">Email:</label>
+                            <div class="col-sm-8">
+                                <input asp-for="Email" class="form-control"  placeholder="Enter email">
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="control-label col-sm-3" for="mobno">Contact No.:</label>
+                            <div class="col-sm-8">
+                                <input asp-for="Contact" class="form-control"  placeholder="Phone Number">
+                                <span asp-validation-for="Contact" class="text-danger"></span>
+                            </div>
+                        </div>
+                        @*<div class="form-group">
+                            <label class="control-label col-sm-3" for="email">Employee Id:</label>
+                            <div class="col-sm-8">
+                                <input asp-for="" class="form-control" id="empid" placeholder="Enter ID">
+                            </div>
+                        </div>*@
+                        <div class="form-group ">
+                            <label class="control-label col-sm-3" for="pwd">Password:</label>
+                            <div class="col-sm-8">
+                                <input asp-for="Password" class="form-control" placeholder="Enter password">
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                             </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="control-label col-sm-3" for="confrmpwd"> Confirm Password:</label>
+                            <div class="col-sm-8">
+                                <input asp-for="ConfirmPassword" class="form-control" placeholder="Re-Enter password">
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <button type="submit" class="col-sm-offset-3 col-sm-2 btn btn-default">Submit</button>
+                        <button type="button" class="col-sm-offset-1 col-sm-2 btn btn-default">Cancel</button>
+                    </form>
+
+                    @section Scripts {
+                        @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+                    }
+
+                </div>
+            </div>
+        </div> <!-- #content -->
+        
+    </div>
+</div>

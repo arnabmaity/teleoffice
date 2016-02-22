@@ -107,6 +107,8 @@ namespace Teleoffice.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
+                    b.Property<long>("Contact");
+
                     b.Property<string>("Email")
                         .HasAnnotation("MaxLength", 256);
 
@@ -114,11 +116,15 @@ namespace Teleoffice.Migrations
 
                     b.Property<string>("FirstName");
 
+                    b.Property<string>("Gender");
+
                     b.Property<string>("LastName");
 
                     b.Property<bool>("LockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
+
+                    b.Property<string>("MiddleName");
 
                     b.Property<string>("NormalizedEmail")
                         .HasAnnotation("MaxLength", 256);
@@ -170,12 +176,30 @@ namespace Teleoffice.Migrations
                     b.HasKey("Id");
                 });
 
+            modelBuilder.Entity("Teleoffice.Models.DeclineMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Message");
+
+                    b.Property<int>("NotificationId");
+
+                    b.Property<int>("ProfessionalId");
+
+                    b.Property<DateTime>("Time");
+
+                    b.HasKey("Id");
+                });
+
             modelBuilder.Entity("Teleoffice.Models.Notification", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("IsDeleted");
+                    b.Property<int>("AppointmentId");
+
+                    b.Property<int>("IsApproved");
 
                     b.Property<string>("Message");
 
