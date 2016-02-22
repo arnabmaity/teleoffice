@@ -53,13 +53,5 @@ namespace Teleoffice.Controllers
 
         }
 
-        [Authorize (Roles ="Administrator")]
-        public IActionResult DeleteRole( String Name)
-        {
-            var role = context.Roles.Where(z => z.Name == Name).Single();
-            context.Roles.Remove(role);
-            context.SaveChanges();
-            return RedirectToAction(nameof(RoleController.Index), "Role");
-        }
     }
 }
