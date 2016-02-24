@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Teleoffice.Models;
 using Microsoft.AspNet.Authorization;
-using System.Dynamic;
+using Teleoffice.ViewModels;
 using System.Security.Claims;
-
+using Microsoft.Data.Entity.Internal;
 
 namespace Teleoffice.Controllers
 {
@@ -24,9 +24,9 @@ namespace Teleoffice.Controllers
         //Get
         public IActionResult Index()
         {
-            dynamic dy = new ExpandoObject();
-            dy.user = context.Users.Where(z => z.Id == User.GetUserId()).Single();
-            dy.notify = context.Notifications.Where(z => z.UserId == User.GetUserId() && z.Read == 0).ToList();
+            //dynamic dy = new ExpandoObject();
+            ViewBag.user = context.Users.Where(z => z.Id == User.GetUserId()).Single();
+            ViewBag.notify = context.Notifications.Where(z => z.UserId == User.GetUserId() && z.Read == 0).ToList();
             var role = context.Roles.Where(z => z.Name == "Professional").Single();
             var userroles = context.UserRoles.Where(z => z.RoleId == role.Id).ToList();
             List<ApplicationUser> prousers = new List<ApplicationUser>();
@@ -39,31 +39,15 @@ namespace Teleoffice.Controllers
                 }
 
             }
-            dy.pros = prousers;
-            //var notif = context.Notifications.Where(z => z.IsApproved == 1 && z.UserId == User.GetUserId()).ToList();
-            //List<ApplicationUser> profname = new List<ApplicationUser>();
-            //if (notif.Count > 0)
-            //{
-            //    foreach (var n in notif)
-            //    {
-            //        var tu = context.Users.Where(u => u.Id == n.UserId).Single();
-            //        prousers.Add(tu);
-            //    }
-
-            //}
-            var app = context.Appointments.Where(z => z.IsValid == 1 && z.ClientId == User.GetUserId()).ToList();
-            //List<ApplicationUser> profname = new List<ApplicationUser>();
-            //if (app.Count > 0)
-            //{
-            //    foreach (var pr in app)
-            //    {
-            //        var p = context.Users.Where(z => z.Id == pr.ProfessionalId).Single();
-            //        profname.Add(p);
-            //    }
-            //}
-            dy.apt = app;
-            //dy.notif = context.Notifications.Where(z => z.IsApproved == 1 && z.UserId == ).ToList();
-            return View(dy);
+            ViewBag.pros = prousers;
+                        
+            var apt = (from a in context.Appointments
+                       join ft in context.Users on a.ProfessionalId equals ft.Id
+                       where a.IsValid == 1 && a.ClientId == User.GetUserId()
+                       select new AppUserViewModel { FName = ft.FirstName, LName = ft.LastName, Subject = a.Subject, MeetTime = a.MeetingTime, AppId = a.Id }).ToList();
+             
+            
+            return View("Index", apt);
             
         }
 
@@ -71,11 +55,11 @@ namespace Teleoffice.Controllers
         [HttpGet]
         public IActionResult CreateAppointment(String ProfId)
         {
-            dynamic dy = new ExpandoObject();
-            dy.user = context.Users.Where(z => z.Id == User.GetUserId()).Single();
-            dy.client = context.Users.Where(z => z.Id == User.GetUserId()).Single();
-            dy.prof = context.Users.Where(z => z.Id == ProfId).Single();
-            return View(dy);
+            //dynamic dy = new ExpandoObject();
+            ViewBag.user = context.Users.Where(z => z.Id == User.GetUserId()).Single();
+            ViewBag.client = context.Users.Where(z => z.Id == User.GetUserId()).Single();
+            ViewBag.prof = context.Users.Where(z => z.Id == ProfId).Single();
+            return View();
 
         }
 
