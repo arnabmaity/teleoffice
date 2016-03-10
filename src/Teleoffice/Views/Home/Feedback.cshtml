@@ -1,29 +1,41 @@
-﻿@{
+﻿@using Teleoffice.Models
+
+@{
     ViewData["Title"] = "Feedback";
 }
- <br></br>
+ <br><br>
     <div class="container">
         <div class="row">
             <div id="content" class="col-sm-8">
                 <h3>Feedback</h3><br>
-                <p>Your feedback is important to us. Please fill the following form and submit.</p>
+                <p>Your feedback is important to us.</p>
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <form role="form">
+                        <form asp-controller="Home" asp-action="Feedback" role="form">
+                            @*@if (!User.IsSignedIn())
+                            {*@ 
                             <div class="form-group">
-                                <label for="name">Full Name</label>
-                                <input type="text" class="form-control" id="name">
+                                <label for="Name">Full Name</label>
+                                <input type="text" class="form-control" id="Name">
                             </div>
                             <div class="form-group">
-                                <label for="email">Email ID</label>
-                                <input type="email" class="form-control" id="email">
+                                <label for="Email">Email ID</label>
+                                <input type="email" class="form-control" id="Email">
                             </div>
+                            @*}
+                            else
+                            {
+                                @ViewBag.user.FirstName @ViewBag.user.LastName
+                            }
+                                <p>
+                                    Your feedback here...
+                                </p>
+                           *@
                             <div class="form-group">
-                                <label for="message">Message</label>
-                                <textarea class="form-control" id="message"></textarea>
+                                <label for="Message">Message</label>
+                                <textarea class="form-control" id="Message"></textarea>
                             </div>
-
-                            <button type="submit" class="btn btn-default">Submit</button>
+                          <button type="submit" class="btn btn-default">Submit</button>
                         </form>
                     </div>
                 </div>

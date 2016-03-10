@@ -23,7 +23,7 @@ namespace Teleoffice.Controllers
         // GET: /<controller>/
         public IActionResult Index()
         {
-            var roles = context.Roles.OrderBy(r => r.Name).ToArray();
+            var roles = context.Roles.OrderBy(r => r.Name).ToList();
             return View(roles);
         }
 
@@ -53,5 +53,12 @@ namespace Teleoffice.Controllers
 
         }
 
+        public IActionResult DeleteRole(string name)
+        {
+            var role = context.Roles.Where(z => z.Name == name).Single();
+            context.Roles.Remove(role);
+            context.SaveChanges();
+            return RedirectToAction("Index");
+        }
     }
 }

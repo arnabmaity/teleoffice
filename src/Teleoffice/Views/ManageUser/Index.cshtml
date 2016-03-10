@@ -43,13 +43,14 @@
             }*@
 
 @using Teleoffice.Models
-@model IEnumerable<Teleoffice.Models.ApplicationUser>
+@model IEnumerable<Teleoffice.ViewModels.Role.Roleuser>
+
 
 @{
     ViewData["Title"] = "Manage Users for this firm..";
 }
 <h2>@ViewData["Title"].</h2>
-<h3>@ViewData["Message"]</h3>
+
 
 @if (Model.Count() != 0)
 {
@@ -59,6 +60,7 @@
             <th>Sr. No.</th>
             <th>Username</th>
             <th>Email</th>
+            <th>Assigned Role</th>
             <th>Actions</th>
         </tr>
         @{
@@ -70,13 +72,15 @@
         {
             <tr>
                 <td>@count</td>
-                <td>@user.UserName</td>
-                <td>@user.Email</td>
+                <td>@user.FName @user.LName</td>
+                <td>@user.Email</td>                
+                <td>@user.Role</td>                
                 <td>
-                    @Html.ActionLink("Add Roles", "UserRoles", "ManageUser", new { id = @user.Id }, new { @class = "btn btn-primary" })
+                    @Html.ActionLink("Add/Change", "UserRoles", "ManageUser", new { id = @user.Id }, new { @class = "link" })
                 </td>
             </tr>
             count = count + 1;
         }
     </table>
             }
+

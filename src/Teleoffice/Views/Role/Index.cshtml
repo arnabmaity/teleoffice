@@ -6,17 +6,15 @@
 @{
     ViewData["Title"] = "List of roles";
 }
-<h2>@ViewData["Title"].</h2>
-<h3>@ViewData["Message"]</h3>
 
 @if (Model.Count() != 0)
 {
-
-    <h2>All Roles</h2>
+    <h2>Administrative Page</h2>
+    <h3> All Roles </h3><br>
     <table class="table table-striped">
        
         @{
-            var user = new IdentityRole();
+            
             int count = 1;
         }
 
@@ -28,26 +26,27 @@
                     <td>
                         <br>@Html.ActionLink("Delete", "DeleteRole", "Role", new { name = @role.Name }, new { @class = "btn btn-danger"})
                     </td>
-                    @{
-                        user = role;
-                      }
+                    
                 </tr>
                 count = count + 1;
-            }
-        <br>
-        <tr>
+         }
+        
+                <tr>
             @*<td>
                 <button type="button" class="btn btn-primary"><a asp-controller="Role" asp-action="Create" method="post" style="color:white;">Add Roles</a></button>
             </td>*@
-            <td><br>
-                @Html.ActionLink("Add Roles", "Create", "Role", new { id = "none" }, new { @class = "btn btn-primary" })
-           
-            </td>
-            <td><br />
-                @Html.ActionLink("Manage Users", "Index", "ManageUser", new { id = "none"}, new { @class = "btn btn-primary" })
-            </td>
+                    <td><br>
+                        @Html.ActionLink("Add Roles", "Create", "Role", new { id = "none" }, new { @class = "btn btn-primary" })
+                    </td>
+                    <td><br />
+                         @Html.ActionLink("Manage Users", "Index", "ManageUser", new { id = "none"}, new { @class = "btn btn-primary" })
+                    </td>
             
-            </tr>
-        </table>
-        }
+               </tr>
+    </table>
+}
 
+<br>
+<div class="panel"  style="height:50px;">
+    @Html.ActionLink("View Feedbacks from clients", "ViewFeedbacks", "Home", new { id = "None" }, new { @class = "link" })
+</div>

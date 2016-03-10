@@ -1,0 +1,29 @@
+﻿@using Teleoffice.Models
+
+@{
+    ViewData["Title"] = "Client";
+}
+<h3>Welcome @ViewBag.user.FirstName @ViewBag.user.LastName</h3>
+<br>
+<div class="col-sm-12">
+    <div class="panel panel-default">
+        <div class="panel-body">
+
+        @ViewBag.notify.Message<br><br>
+        Subject: @ViewBag.app.Subject<br><br>
+        Description: @ViewBag.app.Message<br><br>
+        Meeting Time: @ViewBag.app.MeetingTime<br>
+        <br>
+
+        @if (ViewBag.app.IsValid == 2)
+        {
+            <div class="col-sm-4">
+                <br>@Html.ActionLink("Agree", "Agree", "Client", new { id = ViewBag.notify.Id }, new { @class = "btn btn-default" })
+            </div>
+            <div class="col-sm-4">
+                 @Html.ActionLink("Request Again", "RequestAgain", "Client", new { id = ViewBag.notify.Id }, new { @class = "btn btn-primary" })
+               </div>
+                 }
+           </div>
+        </div>
+    </div>

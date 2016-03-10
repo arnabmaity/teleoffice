@@ -22,119 +22,93 @@ namespace Teleoffice.Controllers
         // Get
         public IActionResult Index()
         {
-            var user = context.Users.Where(u => u.Id == User.GetUserId()).Single();
-            var notifications = context.Notifications.Where(n => n.UserId == User.GetUserId() && n.Read == 0).ToList();
-            var app = context.Appointments.Where(z => z.IsValid == 1 && z.ProfessionalId == User.GetUserId()).ToList();
-            var viewModel = new DeclineMessageViewModel
-            {
-                Notifications = notifications,
-                Users = user,
-                Appointments = app 
-            };
-            return View(viewModel);
+            ViewBag.appnotify = context.Appointments.Where(z => z.IsValid == 1).ToList();
+            ViewBag.user = context.Users.Where(u => u.Id == User.GetUserId()).Single();
+            ViewBag.notify = context.Notifications.Where(n => n.UserId == User.GetUserId() && n.Read == 0).ToList().OrderByDescending(z => z.ReceivedTime);
+            
+            return View("Index");
 
-            //dynamic obj = new ExpandoObject();
-            //obj.user = context.Users.Where(u => u.Id == User.GetUserId()).Single();
-            //obj.notifications = context.Notifications.Where(n => n.UserId == User.GetUserId() && n.Read == 0).ToList();
-            //obj.viewm = new DeclineMessageViewModel();
-            //return View(obj);
         }
 
         public IActionResult Accept( int id)
         {
-            var notifid = context.Notifications.Where(z => z.Id == id).Single(); //some mistake here it cant be single
-            notifid.IsApproved = 3;
-            context.Notifications.Update(notifid);
-            context.SaveChanges();
-            var appuser = context.Appointments.Where(z => z.Id == notifid.AppointmentId).Single();
+            var notifyapp = context.NotifyApps.Where(z => z.ProfNotificationId == id).Single();
+            var appuser = context.Appointments.Where(z => z.Id == notifyapp.AppointmentId).Single();
             var client = context.Users.Where(z => z.Id == appuser.ClientId).Single();
             var prof = context.Users.Where(z => z.Id == appuser.ProfessionalId).Single();
 
-            //Notification for client
-            Notification n = new Notification();
-            n.Message =  prof.FirstName + " " + prof.LastName + " " +  "approved your appointment request.";
+            appuser.IsValid = 1; // accepted request
+            context.Appointments.Update(appuser);
+            
+            var n = context.Notifications.Where(z => z.Id == id).Single();
+            n.Message = "You confirmed the appointment with " + client.FirstName + " " + client.LastName;
             n.ReceivedTime = DateTime.Now;
-            n.UserId = client.Id;
-            n.Read = 0;
-            n.IsApproved = 1;
+            n.Status = 2;
 
-            //Notification for professional
-            Notification m = new Notification();
-            m.Message = "You approved the appointment with" + " " +client.FirstName + " " + client.LastName ;
+            var m = context.Notifications.Where(z => z.Id == notifyapp.ClientNotificationId).Single();
+            m.Message = prof.FirstName + " " + prof.LastName + " " + "confirmed the appointment with you";
             m.ReceivedTime = DateTime.Now;
-            m.UserId = prof.Id;
-            m.Read = 0;
-            m.IsApproved = 1;
-            //deleted the IsDelete column
+            m.Status = 2;
 
-
-            context.Notifications.Add(n);
-            context.Notifications.Add(m);
+            context.Notifications.Update(n);
+            context.Notifications.Update(m);
             context.SaveChanges();
+           
             return RedirectToAction("Index");
         }
 
-        //public IActionResult DeclineGet(int id)
-        //{
-        //    ViewData["id"] = id;
-        //    return View();
-        //}
-
-
         [HttpPost]
-        public IActionResult Decline(DeclineMessageViewModel view, int id)
+        public IActionResult Decline(AppViewModel ap, int id)
         {
-            DeclineMessage model = new DeclineMessage();
-            model.ProfessionalId = view.ProfessionalId;
-            model.Message = view.Message;
-            model.NotificationId = id;
-            model.Time = view.Time;
-
-            context.DeclineMsg.Add(model);
-            context.SaveChanges();
-           //context.DeclineMsg.Add( new DeclineMessage
-           //{
-           //   ProfessionalId = view.ProfessionalId
-           //    NotificationId = id,
-           //    Time = view.Time
-           //});
-                        
-            var msg = context.DeclineMsg.Where(z => z.NotificationId == id).Single();
-            var notifid = context.Notifications.Where(z => z.Id == id).Single();
-            notifid.IsApproved = 3;
-            //context.Notifications.Update(notifid);
-            //context.SaveChanges();
-            var appuser = context.Appointments.Where(z => z.Id == notifid.AppointmentId).Single();//some mistake...rectify it
-            notifid.AppointmentId = appuser.Id;
-            context.Notifications.Update(notifid);
-            context.SaveChanges();
+            var notifyapp = context.NotifyApps.Where(z => z.ProfNotificationId == id).Single();
+            var appuser = context.Appointments.Where(z => z.Id == notifyapp.AppointmentId).Single();
             var client = context.Users.Where(z => z.Id == appuser.ClientId).Single();
             var prof = context.Users.Where(z => z.Id == appuser.ProfessionalId).Single();
 
-            //Notification for client
-            Notification n = new Notification();
-            n.Message = prof.FirstName + " " + prof.LastName + " " + "declined your request with the following message:" + "  " + msg.Message +"  " + "with preferred time: "+ msg.Time ;
+            appuser.IsValid = 2; //declined request
+            appuser.Message = ap.Message;
+            appuser.MeetingTime = ap.MeetTime;
+            context.Appointments.Update(appuser);
+            
+            var n = context.Notifications.Where(z => z.Id == id).Single();
+            n.Message = "You declined the appointment with " + client.FirstName + " " + client.LastName;
             n.ReceivedTime = DateTime.Now;
-            n.UserId = client.Id;
-            n.Read = 0;
-            n.IsApproved = 2;
-            n.AppointmentId = notifid.AppointmentId;
+            n.Status = 3;
 
-            //Notification for professional
-            Notification m = new Notification();
-            m.Message = "You declined the appointment with" + " " + client.FirstName + " " + client.LastName;
+            var m = context.Notifications.Where(z => z.Id == notifyapp.ClientNotificationId).Single();
+            m.Message = prof.FirstName + " " + prof.LastName + " " + "declined the appointment with you";
             m.ReceivedTime = DateTime.Now;
-            m.UserId = prof.Id;
-            m.Read = 0;
-            m.IsApproved = 2;
-            //deleted the IsDelete column
-
-            context.Notifications.Add(n);
-            context.Notifications.Add(m);
+            m.Status = 3;
+            
+            context.Notifications.Update(n);
+            context.Notifications.Update(m);
             context.SaveChanges();
             return RedirectToAction("Index");
             
-        }   
+        }
+        
+        public IActionResult ViewAppointments()
+        {
+            ViewBag.appnotify = context.Appointments.Where(z => z.IsValid == 1).ToList();
+            ViewBag.user = context.Users.Where(u => u.Id == User.GetUserId()).Single();
+            ViewBag.notify = context.Notifications.Where(n => n.UserId == User.GetUserId() && n.Read == 0).ToList();
+           
+            var apt = (from a in context.Appointments
+                       join ft in context.Users on a.ClientId equals ft.Id
+                       where (a.IsValid == 1 || a.IsValid == 2) && a.ProfessionalId == User.GetUserId()
+                       select new AppViewModel { FName = ft.FirstName, LName = ft.LastName, Subject = a.Subject, MeetTime = a.MeetingTime, AppId = a.Id }).ToList();
+            //some imp changes....remember
+            return View("ViewAppointments", apt.OrderBy(z => z.MeetTime));
+         }   
+
+        public IActionResult NotificationDetail(int id)
+        {
+            ViewBag.user = context.Users.Where(u => u.Id == User.GetUserId()).Single();
+            ViewBag.notify = context.Notifications.Where(z => z.Id == id).Single();
+            var notifyapp = context.NotifyApps.Where(z => z.ProfNotificationId == id).Single();
+            ViewBag.app = context.Appointments.Where(z => z.Id == notifyapp.AppointmentId).Single();
+            return View();
+        }
 
     }
 }

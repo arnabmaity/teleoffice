@@ -8,9 +8,10 @@ using Teleoffice.Models;
 namespace Teleoffice.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160225124757_Viewqqq")]
+    partial class Viewqqq
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -104,8 +105,6 @@ namespace Teleoffice.Migrations
 
                     b.Property<int>("AccessFailedCount");
 
-                    b.Property<int>("CallRate");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
@@ -178,20 +177,6 @@ namespace Teleoffice.Migrations
                     b.HasKey("Id");
                 });
 
-            modelBuilder.Entity("Teleoffice.Models.Feedback", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Email");
-
-                    b.Property<string>("Message");
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("Id");
-                });
-
             modelBuilder.Entity("Teleoffice.Models.Notification", b =>
                 {
                     b.Property<int>("Id")
@@ -202,8 +187,6 @@ namespace Teleoffice.Migrations
                     b.Property<int>("Read");
 
                     b.Property<DateTime>("ReceivedTime");
-
-                    b.Property<int>("Status");
 
                     b.Property<string>("UserId");
 
@@ -220,6 +203,8 @@ namespace Teleoffice.Migrations
                     b.Property<int>("ClientNotificationId");
 
                     b.Property<int>("ProfNotificationId");
+
+                    b.Property<string>("UserId");
 
                     b.HasKey("Id");
                 });
@@ -268,6 +253,13 @@ namespace Teleoffice.Migrations
                 });
 
             modelBuilder.Entity("Teleoffice.Models.Notification", b =>
+                {
+                    b.HasOne("Teleoffice.Models.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("Teleoffice.Models.NotifyApp", b =>
                 {
                     b.HasOne("Teleoffice.Models.ApplicationUser")
                         .WithMany()

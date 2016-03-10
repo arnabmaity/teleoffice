@@ -13,6 +13,7 @@ using Teleoffice.Models;
 using Teleoffice.Services;
 using Teleoffice.ViewModels.Account;
 using System.Dynamic;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Teleoffice.Controllers
 {
@@ -145,15 +146,50 @@ namespace Teleoffice.Controllers
                     //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                     //await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
                     //    "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
-                    await _signInManager.SignInAsync(user, isPersistent: false);
+                   // await _signInManager.SignInAsync(user, isPersistent: false);
                     _logger.LogInformation(3, "User created a new account with password.");
-                    return RedirectToAction(nameof(HomeController.Index), "Home");
+
+                    //var role = context.Roles.Where(z => z.Name == "Client").Single();
+
+                    await this._userManager.AddToRoleAsync(user, model.Role);
+                    context.SaveChanges();
+                    var roleid = context.UserRoles.Where(z => z.UserId == user.Id).Single();
+                    var userrole = context.Roles.Where(z => z.Id == roleid.RoleId).Single();
+                    String arole = userrole.Name.ToString();
+
+                    //if (arole == "Client")
+                    //{
+                    //    return RedirectToAction(nameof(ClientController.Index), "Client");
+                    //}
+                    //else {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction("Redirect", "Account");
+                    
+
+                    
                 }
                 AddErrors(result);
             }
 
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+
+
+        public IActionResult Redirect()
+        {
+            var user = context.Users.Where(z => z.Id == User.GetUserId()).Single();
+            var roleid = context.UserRoles.Where(z => z.UserId == user.Id).Single();
+            var userrole = context.Roles.Where(z => z.Id == roleid.RoleId).Single();
+            String role = userrole.Name.ToString();
+
+            if (role == "Client")
+            {
+                return RedirectToAction(nameof(ClientController.Index), "Client");
+            }
+            else {
+                return RedirectToAction("Index", "Home");
+        }
         }
 
         //

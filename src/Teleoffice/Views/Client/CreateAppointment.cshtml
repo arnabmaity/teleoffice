@@ -1,21 +1,22 @@
 ﻿@using Teleoffice.Models
-@model dynamic
+@using Teleoffice.ViewModels.Client
+@model AppUserViewModel
 
 @{
     ViewData["Title"] = "Client";
 }
-<h3>Welcome @Model.user.FirstName @Model.user.LastName</h3>
-<h4>Create new appointment with - @Model.prof.FirstName @Model.prof.LastName</h4>
+<h3>Welcome @ViewBag.user.FirstName @ViewBag.user.LastName</h3>
+<h4>Create new appointment with - @ViewBag.prof.FirstName @ViewBag.prof.LastName</h4>
 <form asp-controller="Client" asp-action="CreateAppointment" method="post">
     <div class="form-group">
-        <input hidden id="ProfessionalId" name="ProfessionalId" type="text" value="@Model.prof.Id" />
-        <input hidden id="ClientId" name="ClientId" type="text" value="@Model.client.Id" />
+        <input hidden id="ProfessionalId" name="ProfessionalId" type="text" value="@ViewBag.prof.Id" />
+        <input hidden id="ClientId" name="ClientId" type="text" value="@ViewBag.client.Id" />
         <label for="Subject">Subject</label>
-        <input id="Subject" name="Subject" class="form-control" />
+        <input asp-for="Subject" name="Subject" class="form-control" />
         <label for="Message">Message</label>
-        <textarea id="Message" name="Message" class="form-control"></textarea>
+        <textarea asp-for="Message" class="form-control"></textarea>
         <label for="MeetingTime">Date Time</label>
-        <input type="datetime" id="MeetingTime" name="MeetingTime" class="form-control" />
+        <input asp-for="MeetTime" name="MeetingTime" class="form-control" placeholder="00-00-0000 00:00:00 am" />
     </div>
     <button class="btn btn-default btn-primary">Submit</button>
 </form>

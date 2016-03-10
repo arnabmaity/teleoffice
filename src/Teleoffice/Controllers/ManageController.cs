@@ -21,19 +21,21 @@ namespace Teleoffice.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
+        private ApplicationDbContext context;
 
         public ManageController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         IEmailSender emailSender,
         ISmsSender smsSender,
-        ILoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory, ApplicationDbContext _context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
             _logger = loggerFactory.CreateLogger<ManageController>();
+            context = _context;
         }
 
         //
@@ -313,6 +315,33 @@ namespace Teleoffice.Controllers
             var result = await _userManager.AddLoginAsync(user, info);
             var message = result.Succeeded ? ManageMessageId.AddLoginSuccess : ManageMessageId.Error;
             return RedirectToAction(nameof(ManageLogins), new { Message = message });
+        }
+
+        public IActionResult RedPage()
+        {
+            var user = context.Users.Where(z => z.Id == User.GetUserId()).Single();
+            var roleid = context.UserRoles.Where(z => z.UserId == user.Id).Single();
+            var userrole = context.Roles.Where(z => z.Id == roleid.RoleId).Single();
+            String role = userrole.Name.ToString();
+
+            if (role == "Administrator")
+            {
+                return RedirectToAction(nameof(RoleController.Index), "Role");
+            }
+
+            if (role == "Professional")
+            {
+                return RedirectToAction(nameof(ProfessionalController.Index), "Professional");
+            }
+
+            if (role == "Client")
+            {
+                return RedirectToAction(nameof(ClientController.Index), "Client");
+            }
+            else
+            {
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
         }
 
         #region Helpers

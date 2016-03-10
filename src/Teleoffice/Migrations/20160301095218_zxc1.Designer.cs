@@ -8,9 +8,10 @@ using Teleoffice.Models;
 namespace Teleoffice.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20160301095218_zxc1")]
+    partial class zxc1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
@@ -103,8 +104,6 @@ namespace Teleoffice.Migrations
                     b.Property<string>("Id");
 
                     b.Property<int>("AccessFailedCount");
-
-                    b.Property<int>("CallRate");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
@@ -202,8 +201,6 @@ namespace Teleoffice.Migrations
                     b.Property<int>("Read");
 
                     b.Property<DateTime>("ReceivedTime");
-
-                    b.Property<int>("Status");
 
                     b.Property<string>("UserId");
 

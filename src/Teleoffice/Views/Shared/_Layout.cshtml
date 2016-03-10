@@ -50,13 +50,14 @@
             </div>
         </div>
     </div><!-- #header -->
-    <div class="container body-content">
+    <div class="container body-content" id="content">
         @RenderBody()
+    </div>
         <hr />
         <footer>
-            <p>&copy; 2016 - Teleoffice</p>
+            <p align="center">&copy; 2016 - Teleoffice</p>
         </footer>
-    </div>
+   
 
         <script>
             $(document).ready(function () {
@@ -74,7 +75,13 @@
                         }
                     });
                 });
-                //Next code
+                $("#decline").click(function () {
+                    $("#myModal").modal();
+                });
+                //$('.attend').click(function () {
+                //    if()
+
+                //});
             });
         </script>
 

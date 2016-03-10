@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Teleoffice.Models;
 using System.Dynamic;
+using Teleoffice.ViewModels.Role;
 using System.Diagnostics;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
@@ -15,7 +16,7 @@ using Microsoft.AspNet.Authorization;
 
 namespace Teleoffice.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    
     public class ManageUserController : Controller
     {
         private ApplicationDbContext context;
@@ -24,13 +25,26 @@ namespace Teleoffice.Controllers
         {
             context = _context;
         }
+
         // GET: /<controller>/
+        [Authorize(Roles = "Administrator")]
         public IActionResult Index()
         {
-            var users = context.Users.OrderBy(u => u.UserName).ToArray();
-            return View(users);
+            //dynamic dy = new ExpandoObject();
+            var  users = context.Users.OrderBy(u => u.UserName).ToArray();
+            var userrole = (from a in context.Roles
+                            join ft in context.UserRoles on a.Id equals ft.RoleId
+                            join z in context.Users on ft.UserId equals z.Id
+                            select new Roleuser { FName = z.FirstName, LName = z.LastName, Email = z.Email, Role = a.Name, Id = z.Id }).ToList();
+
+            //dy.role = (from xt in context.UserRoles
+            //            join a in context.Users on xt.UserId equals a.Id 
+            //             from t in context.UserRoles.DefaultIfEmpty()
+            //             select new Roleuser { FName = a.FirstName, LName = a.LastName, Email = a.Email, Role = null, Id = a.Id }).ToList();
+            return View(userrole);
         }
 
+        [Authorize(Roles = "Administrator")]
         public IActionResult UserRoles(String id)
         {
             dynamic vm = new ExpandoObject();
@@ -50,6 +64,7 @@ namespace Teleoffice.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpGet]
         public IActionResult AddUserRole(String id)
         {
@@ -60,6 +75,7 @@ namespace Teleoffice.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public IActionResult AddUserRole(IdentityUserRole<String> userrole)
         {
@@ -72,12 +88,27 @@ namespace Teleoffice.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Administrator")]
         public IActionResult DeleteUserRole(String id, String roleid)
         {
             var userrole = context.UserRoles.Where(u => u.UserId == id & u.RoleId == roleid).Single();
             context.UserRoles.Remove(userrole);
             context.SaveChanges();
             return RedirectToAction("UserRoles", new { id = userrole.UserId });
+        }
+
+        public IActionResult AddRole(IdentityUserRole<string> userrole)
+        {
+            //var role = context.Roles.Where(z => z.Name == "Client").Single();
+            //IdentityUserRole<string> userrole = new IdentityUserRole<string>();
+            //userrole.UserId = id;
+            //userrole.RoleId = role.Id;
+            //context.UserRoles.Add(userrole);
+            //context.SaveChanges();
+            context.UserRoles.Add(userrole);
+            context.SaveChanges();
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

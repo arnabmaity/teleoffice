@@ -14,7 +14,8 @@ namespace Teleoffice.Models
         public String LastName { get; set; }
         public long Contact { get; set; }
         public String Gender { get; set; }
-
+        public int CallRate { get; set; }
+        
         public List<Notification> Notifications { get; set; }
         public ApplicationUser()
         {

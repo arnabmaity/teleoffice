@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Teleoffice.Models;
 
-namespace Teleoffice.ViewModels.Client
+namespace Teleoffice.ViewModels.Professional
 {
-    public class AppUserViewModel
+    public class AppViewModel
     {
-
+        
         public String FName { get; set; }
 
         public String LName { get; set; }
@@ -18,13 +18,12 @@ namespace Teleoffice.ViewModels.Client
 
         public DateTime MeetTime { get; set; }
 
-        public String Message { get; set; }
-
         public int AppId { get; set; }
 
-        //public int ClientId { get; set; }
-        //public String Message { get; set; }
 
+        public int ProfessionalId { get; set; }
+        public String Message { get; set; }
+        
 
     }
 }

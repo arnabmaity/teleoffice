@@ -11,7 +11,9 @@ namespace Teleoffice.Models
     {
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
-        public DbSet<DeclineMessage> DeclineMsg{ get; set; }
+        //public DbSet<DeclineMessage> DeclineMsg{ get; set; }
+        public DbSet<NotifyApp> NotifyApps { get; set; }
+        public DbSet<Feedback> FeedBack { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

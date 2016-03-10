@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Teleoffice.Models;
 using Microsoft.AspNet.Authorization;
-using Teleoffice.ViewModels;
+using Teleoffice.ViewModels.Client;
 using System.Security.Claims;
 using Microsoft.Data.Entity.Internal;
 
@@ -40,13 +40,26 @@ namespace Teleoffice.Controllers
 
             }
             ViewBag.pros = prousers;
-                        
+
+            //var role1 = context.Roles.Where(z => z.Name == "Assistant").Single();
+            //var userroles1 = context.UserRoles.Where(z => z.RoleId == role.Id).ToList();
+            //List<ApplicationUser> prousers1 = new List<ApplicationUser>();
+            //if (userroles1.Count > 0)
+            //{
+            //    foreach (var ur in userroles1)
+            //    {
+            //        var tu = context.Users.Where(u => u.Id == ur.UserId).Single();
+            //        prousers1.Add(tu);
+            //    }
+
+            //}
+            //ViewBag.assist = prousers1;
+
             var apt = (from a in context.Appointments
                        join ft in context.Users on a.ProfessionalId equals ft.Id
                        where a.IsValid == 1 && a.ClientId == User.GetUserId()
                        select new AppUserViewModel { FName = ft.FirstName, LName = ft.LastName, Subject = a.Subject, MeetTime = a.MeetingTime, AppId = a.Id }).ToList();
-             
-            
+                                     
             return View("Index", apt);
             
         }
@@ -84,27 +97,38 @@ namespace Teleoffice.Controllers
             context.SaveChanges();
             var client = context.Users.Where(u => u.Id == app.ClientId).Single();
             var prof = context.Users.Where(u => u.Id == app.ProfessionalId).Single();
-            var id = context.Appointments.Last();
+            //var id = context.Appointments.Last();
+            
             //notification for client
             Notification n = new Notification();            
-            n.Message = "You requested an appointment with " + prof.FirstName + " " + prof.LastName;
+            n.Message = "You requested an appointment with " + prof.FirstName + " " + prof.LastName + " on " + app.MeetingTime;
             n.ReceivedTime = DateTime.Now;
             n.UserId = client.Id;
             n.Read = 0;
-            n.IsApproved = 0;
-            n.AppointmentId = id.Id;
+            n.Status = 1;
+            //n.IsApproved = 0;
+            //n.AppointmentId = id.Id;
 
             //notification for prof
             Notification m = new Notification();
-            m.Message = client.FirstName + " " + client.LastName + "  requested an appointment with you!";
+            m.Message = client.FirstName + " " + client.LastName + "  requested an appointment with you on " + app.MeetingTime;
             m.ReceivedTime = DateTime.Now;
             m.UserId = prof.Id;
             m.Read = 0;
-            m.IsApproved = 0;
-            m.AppointmentId = id.Id;
+            m.Status = 1;
+            //m.IsApproved = 0;
+            //m.AppointmentId = id.Id;
 
             context.Notifications.Add(n);
             context.Notifications.Add(m);
+            context.SaveChanges();
+
+            NotifyApp an = new NotifyApp();
+            var appid = context.Appointments.Last();
+            an.AppointmentId = appid.Id;
+            an.ClientNotificationId = n.Id;
+            an.ProfNotificationId = m.Id;
+            context.NotifyApps.Add(an);
             context.SaveChanges();
             return RedirectToAction("Index");
 
@@ -112,46 +136,65 @@ namespace Teleoffice.Controllers
 
         public IActionResult Agree(int id)
         {
-            var notify = context.Notifications.Where(z => z.Id == id).Single();
-            notify.IsApproved = 1;
-            context.SaveChanges();
-            var client = context.Users.Where(z => z.Id == notify.UserId).Single();
-            var profid = context.Appointments.Where(z => z.Id == notify.AppointmentId).Single();
-            profid.IsValid = 1;
-            context.SaveChanges();
-            var prof = context.Users.Where(z => z.Id == profid.ProfessionalId).Single();
+            var notifyapp = context.NotifyApps.Where(z => z.ClientNotificationId == id).Single();
+            var appuser = context.Appointments.Where(z => z.Id == notifyapp.AppointmentId).Single();
+            var client = context.Users.Where(z => z.Id == appuser.ClientId).Single();
+            var prof = context.Users.Where(z => z.Id == appuser.ProfessionalId).Single();
 
-            Notification n = new Notification();
+            appuser.IsValid = 1; // agreed on prof's demand
+            context.Appointments.Update(appuser);
+
+            var n = context.Notifications.Where(z => z.Id == id).Single();
             n.Message = "You confirmed an appointment with " + prof.FirstName + " " + prof.LastName;
             n.ReceivedTime = DateTime.Now;
-            n.UserId = client.Id;
-            n.Read = 0;
-            n.IsApproved = 0;
-            //n.AppointmentId = 0;
+            n.Status = 2;
 
-            //notification for prof
-            Notification m = new Notification();
-            m.Message = client.FirstName + " " + client.LastName + "  confirmed an appointment with you!";
+            var m = context.Notifications.Where(z => z.Id == id).Single();
+            m.Message = client.FirstName + " " + client.LastName + "confirmed appointment with you";
             m.ReceivedTime = DateTime.Now;
-            m.UserId = prof.Id;
-            m.Read = 0;
-            m.IsApproved = 0;
-            m.AppointmentId = notify.AppointmentId;
+            m.Status = 2;
 
-            context.Notifications.Add(n);
-            context.Notifications.Add(m);
+            context.Notifications.Update(n);
+            context.Notifications.Update(m);
             context.SaveChanges();
-
-
+            
             return RedirectToAction("Index");
         }
 
         public IActionResult RequestAgain(int id)
         {
-            var user = context.Notifications.Where(z => z.Id == id).Single();
-            var profid = context.Appointments.Where(z => z.Id == user.AppointmentId).Single();
-            var prof = context.Users.Where(z => z.Id == profid.ProfessionalId).Single();
+            var notifyapp = context.NotifyApps.Where(z => z.ClientNotificationId == id).Single();
+            var appuser = context.Appointments.Where(z => z.Id == notifyapp.AppointmentId).Single();
+            var prof = context.Users.Where(z => z.Id == appuser.ProfessionalId).Single();
             return RedirectToAction("CreateAppointment", new { ProfId = prof.Id });
+        }
+
+        public IActionResult ViewAppointments()
+        {
+            ViewBag.app = context.Appointments.Where(z => z.IsValid == 1).ToList();
+            ViewBag.user = context.Users.Where(u => u.Id == User.GetUserId()).Single();
+            ViewBag.notify = context.Notifications.Where(n => n.UserId == User.GetUserId() && n.Read == 0).ToList();
+
+            var apt = (from a in context.Appointments
+                       join ft in context.Users on a.ProfessionalId equals ft.Id
+                       where (a.IsValid == 1 || a.IsValid == 3) && a.ClientId == User.GetUserId()
+                       select new AppUserViewModel { FName = ft.FirstName, LName = ft.LastName, Subject = a.Subject, MeetTime = a.MeetingTime, AppId = a.Id }).ToList();
+
+            return View("ViewAppointments", apt);
+        }
+
+        public IActionResult NotificationDetail(int id)
+        {
+            ViewBag.user = context.Users.Where(u => u.Id == User.GetUserId()).Single();
+            ViewBag.notify = context.Notifications.Where(z => z.Id == id).Single();
+            var notifyapp = context.NotifyApps.Where(z => z.ClientNotificationId == id).Single();
+            ViewBag.app = context.Appointments.Where(z => z.Id == notifyapp.AppointmentId).Single();
+            return View();
+        }
+        public IActionResult CallRate()
+        {
+            ViewBag.callrate = context.Users.Where(z => z.CallRate != 0).ToList();
+            return View();
         }
 
     }

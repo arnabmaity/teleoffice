@@ -1,0 +1,91 @@
+﻿@using Teleoffice.Models
+@using Teleoffice.ViewModels.Professional
+@model AppViewModel
+
+@{
+    ViewData["Title"] = "Professional";
+}
+<br>
+<h3>Hello @ViewBag.user.FirstName @ViewBag.user.LastName</h3><br>
+<h4>Your Appointments are:</h4><br>
+
+<div class="col-sm-12">
+    <div class="panel panel-default">
+        
+            <div class="panel-heading">@ViewBag.notify.Message</div><br>
+        <div class="panel-body">
+            <b>Subject:</b>  @ViewBag.app.Subject<br><br>
+            <b>Description:</b>  @ViewBag.app.Message<br><br>
+            <b>Meeting Time:</b>  @ViewBag.app.MeetingTime<br>
+            <br><br>
+
+            @if (ViewBag.app.IsValid == 0)
+            {
+                <div class="col-sm-4">
+                    @Html.ActionLink("Accept", "Accept", "Professional", new { id = ViewBag.notify.Id }, new { @class = "btn btn-default accept" })
+                </div>
+                <div class="col-sm-4">
+                    <button type="button" class="btn btn-default " id="@ViewBag.notify.Id">Decline</button>
+                </div>
+
+            <!-- Trigger the modal with a button -->
+            <!-- Modal -->
+
+                <div class="modal fade" id="myModal" role="dialog">
+                    <div class="modal-dialog">
+
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header" style="padding:35px 50px;">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4><span class="glyphicon glyphicon-lock"></span>Decline with a message</h4>
+                            </div>
+                            <div class="modal-body" style="padding:40px 50px;">
+                                <form asp-controller="Professional" asp-action="Decline" method="post">
+                                    <div class="form-group">
+
+                                        <input hidden asp-for="ProfessionalId" type="text" value="@ViewBag.user.Id" />
+                                        <input hidden id="id" name="id" type="text" value="@ViewBag.notify.Id" />
+                                        <label for="Message"><span class="glyphicon glyphicon-user"></span>Message</label>
+                                        <textarea asp-for="Message" class="form-control" placeholder="Enter your message"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Time"><span class="glyphicon glyphicon-eye-open"></span>Preferred Date time </label>
+                                        <input asp-for="MeetTime" class="form-control" placeholder="00-00-0000 00:00:00 am " />
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <div class="col-sm-4">
+                                                    <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span>Send</button>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $("#@ViewBag.notify.Id").click(function () {
+                            $("#myModal").modal();
+                        });
+                    });
+
+                </script>
+
+            }
+
+        </div>
+    </div>
+    </div>
+
+

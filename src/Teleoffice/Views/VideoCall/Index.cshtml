@@ -6,10 +6,39 @@
 @{
     ViewData["Title"] = "Appointment";
 }
+<br />
+@*@if (Model.id)
+{*@
+<div class="row">
+    <div class="panel-group col-md-8">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                You have an appointment with
+                @if (Model.usrrole.RoleId == Model.role.Id)
+                {
+                    @Model.prof.FirstName  @Model.prof.LastName
+                }
+                else {
+                    @Model.client.FirstName  @Model.client.LastName
+                }.
+            </div>
+            <div class="panel-body">
+                Subject: @Model.app.Subject
+                <br>
+                Description: @Model.app.Message
+            </div>
+        </div>
+    </div>
+</div>
+@*<div class="row">
+    <div class="alert alert-info alert-dismissable col-md-8" id="alert">
+        @Html.ActionLink("Click here to initiate your call.", "Call", "VideoCall", new { id = Model.app.Id}, new { @class = "link"})
+    </div>
+</div>*@
 <style>
     #main video {
-        width: 640px;
-        height: 480px;
+        width: 540px;
+        height: 360px;
         margin: 0px;
         padding: 10px;
     }
@@ -17,80 +46,236 @@
     #preview video {
         margin: 0px;
         width: 160px;
-        height: 160px;
+        height: 100px;
         padding: 5px;
     }
 </style>
-<h2>@ViewData["Title"].</h2>
-<h3>@Model.app.Subject</h3>
 
-<div id="main"></div>
-<div id="preview"></div>
+
+<div class="row">
+    <div class="col-md-2" id="preview"></div>
+    <div class="col-md-8" id="main"></div>
+    <p align="center"><br>HOURS: <span id="hourelement">0</span><br>MINUTES: <span id="minuteelement">0 </span><br>SECONDS: <span id="secondelement">0</span></p>
+    @*<video id="preview" width="160" height="100" controls>
+                </video>
+        <video id="main" width="540" height="360" controls></video>*@
+
+</div>
+@*<div class="row">
+    @*<button class="btn btn-success col-md-offset-3" id="start">Start</button>*@
+   @* <button class="btn btn-danger" id="end">End</button>
+</div>*@
+
 
 <script src="http://code.jquery.com/jquery-2.2.0.js"></script>
 <script type="text/javascript" src="https://api.bistri.com/bistri.conference.min.js"></script>
+<script src="~/js/time.js"></script>
 
 <script type="text/javascript">
-        onBistriConferenceReady = function(){
-            var localStream;
-            var remoteStream;
+    //$(document).ready(function () {
+    //    $('#start').click(function (event) {
+    //        document.getElementById('#start').disabled = true;
+    //        document.getElementById('#alert').hide = true;
 
-            // initialize API client with application keys
-            // if you don't have your own, you can get them at:
-            // https://api.developers.bistri.com/login
-            bc.init({
-                appId: "9d36c6ec",
-                appKey: "302d794a522a59e67a237020ddb0f6ac"
-            });
 
-            // test if the browser is WebRTC compatible
-            if (!bc.isCompatible()) {
-                // if the browser is not compatible, display an alert
-                alert("your browser is not WebRTC compatible !");
-                // then stop the script execution
-                return;
-            }
+    var stopflag = false;
 
-            /* Set events handler */
 
-            // when local user is connected to the server
-            bc.signaling.bind("onConnected", function () {
-                // ask the user to access to his webcam and set the resolution to 320x240
-                bc.startStream("webcam-sd", function (stream) {
-                    // set "localStream" variable with the local stream
-                    localStream = stream;
-                    // insert the local webcam stream into the page body, mirror option invert the display
-                    bc.attachStream(stream, document.getElementById('preview'), { mirror: true });
-                    // join a conference room called "conference_demo" and limit conference to 4 participants
-                    bc.joinRoom("conf_@Model.app.Id", 4);
+    var hourcounter = 0;
+    var minutecounter = 0;
+    var secondcounter = 0;
+    var tenthsecondcounter = 0;
+    var hundredthsecondcounter = 0;
+    var total = 0;
+
+            onBistriConferenceReady = function () {
+                var localStream;
+                var remoteStream;
+                var intervalhandle;
+
+                
+
+                function starttimer() {
+
+                    stopflag = false;
+
+                } /* END FUNCTION starttimer */
+
+                function stoptimer() {
+
+                    stopflag = true;
+
+                } /* END FUNCTION stoptimer */
+
+                var checktimedispatcher = function () {
+                    if (stopflag == true) {
+                        return;
+                    } /* don't change the timers if we have stopped timing */
+
+                    hundredthsecondcounter = hundredthsecondcounter + 1;
+                    //document.getElementById("hundredthelement").innerHTML= hundredthsecondcounter;
+                    if ((hundredthsecondcounter % 10) == 0) {
+                        tenthsecondcounter = tenthsecondcounter + 1;
+                        //document.getElementById("tenthelement").innerHTML= tenthsecondcounter;
+                        if ((tenthsecondcounter % 10) == 0) {
+                            secondcounter = secondcounter + 1;
+                            document.getElementById("secondelement").innerHTML = secondcounter;
+                            if ((secondcounter % 60) == 0) {
+                                minutecounter = minutecounter + 1;
+                                secondcounter = 0;
+                                document.getElementById("secondelement").innerHTML = secondcounter;
+                                document.getElementById("minuteelement").innerHTML = minutecounter;
+
+                                if ((minutecounter % 60) == 0) {
+                                    hourcounter = hourcounter + 1;
+                                    minutecounter = 0;
+                                    //secondcounter = 0;
+                                    document.getElementById("secondelement").innerHTML = secondcounter;
+                                    document.getElementById("minuteelement").innerHTML = minutecounter;
+                                    document.getElementById("hourelement").innerHTML = hourcounter;
+                                    total = 3600 * hourcounter + 60 * minutecounter + secondcounter;
+                                } /* END hour check */
+                                total = 3600 * hourcounter + 60 * minutecounter + secondcounter;
+                            } /* END minute check */
+                            total = 3600 * hourcounter + 60 * minutecounter + secondcounter;
+                        } /* END second check */
+                        total = 3600 * hourcounter + 60 * minutecounter + secondcounter;
+
+                    } /* END tenth second check */
+                    total = 3600 * hourcounter + 60 * minutecounter + secondcounter;
+                };
+                ch = function () {
+                   
+                    alert("You have successfully completed your meeting. Your total time in seconds: " + (total) + ". Amount to be paid: Rs. " + (total * 5000));
+                    bc.detachStream(stream);
+                    hourcounter = 0;
+                    minutecounter = 0;
+                    secondcounter = 0;
+                };
+                //checktimedispatcher.receipt = function () {
+                //    //bc.detachStream(stream);
+                //    alert("You have successfully completed your meeting. Your total time in seconds: " + (total) + ". Amount to be paid: Rs. "  + (total*5000));
+                //    hourcounter = 0;
+                //    minutecounter = 0;
+                //    secondcounter = 0;
+                //};
+                /* END FUNCTION checktimedispatcher */
+
+                /*!--asdf on window load init--*/
+
+                //-->
+                // initialize API client with application keys
+                // if you don't have your own, you can get them at:
+                // https://api.developers.bistri.com/login
+                bc.init({
+                    appId: "9d95f39a",
+                    appKey: "e7335fcc5d600860adc4c13fd60cc178"
                 });
-            });
 
-            // when the user has joined a room
-            bc.signaling.bind("onJoinedRoom", function (result) {
-                // set room members array in a var "roomMembers"
-                var roomMembers = result.members;
-                // then, for every single members already present in the room ...
-                for (var i = 0, max = roomMembers.length; i < max; i++) {
-                    // ... request a call
-                    bc.call(roomMembers[i].id, "conf_@Model.app.Id", { stream: localStream });
+                // test if the browser is WebRTC compatible
+                if (!bc.isCompatible()) {
+                    // if the browser is not compatible, display an alert
+                    alert("your browser is not WebRTC compatible !");
+                    // then stop the script execution
+                    return;
                 }
-            });
 
-            // when a new remote stream is received
-            bc.streams.bind("onStreamAdded", function (remoteStream) {
-                // insert the new remote stream into the page body
-                bc.attachStream(remoteStream, document.getElementById('main'));
-            });
+                /* Set events handler */
 
-            // when a stream has been stopped
-            bc.streams.bind("onStreamClosed", function (stream) {
-                // remove the stream from the page
-                bc.detachStream(stream);
-            });
+                // when local user is connected to the server
+                bc.signaling.bind("onConnected", function () {
+                    // ask the user to access to his webcam and set the resolution to 320x240
+                    bc.startStream("webcam-sd", function (stream) {
+                        // set "localStream" variable with the local stream
+                        localStream = stream;
+                        // insert the local webcam stream into the page body, mirror option invert the display
+                        bc.attachStream(stream, document.getElementById('preview'), { mirror: true });
+                        // join a conference room called "conference_demo" and limit conference to 4 participants
+                        bc.joinRoom("conf_@Model.app.Id", 4);
+                    });
+                });
 
-            // open a new session on the server
-            bc.connect();
-        }
+                // when the user has joined a room
+                bc.signaling.bind("onJoinedRoom", function (result) {
+                    // set room members array in a var "roomMembers"
+                    var roomMembers = result.members;
+                    // then, for every single members already present in the room ...
+                    for (var i = 0, max = roomMembers.length; i < max; i++) {
+                        // ... request a call
+                        bc.call(roomMembers[i].id, "conf_@Model.app.Id", { stream: localStream });
+                    }
+                });
+
+                // when a new remote stream is received
+                bc.streams.bind("onStreamAdded", function (remoteStream) {
+                    // insert the new remote stream into the page body
+                    bc.attachStream(remoteStream, document.getElementById('main'));
+                    intervalhandle = window.setInterval(function () { checktimedispatcher() }, 10);
+                                   });
+
+                
+                // when a stream has been stopped
+                bc.streams.bind("onStreamClosed", function (stream) {
+                    // remove the stream from the page
+                    checktimedispatcher.receipt();
+                    bc.detachStream(stream);
+                     
+
+                    //    });
+                    //});
+                   
+                });
+                    // open a new session on the server
+                    bc.connect();
+               
+                }
+        //});
+
 </script>
 
+
+
+    
+
+    <!--asdf CSS style-->
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
+    <!--asdf JavaScript-->
+    <script type="text/javascript">
+<!--
+
+ /* GLOBALS (property of window object) */
+
+
+
+    </script>
+   
+<!--asdf main HTML-->
+<body>
+
+
+
+
+    <div id="mainpage">
+
+        <div id="maincontent">
+
+            <div id="targetarea">
+
+                
+            </div>
+
+        </div><!--targetarea-->
+
+     @*@ <a href="#" onclick='checktimedispatcher.receipt();'>End</a>*@
+ @* <a asp-controller="Home" asp-action="Index"  onclick="checktimedispatcher.receipt();">End</a>*@
+
+        <a asp-controller="Home" asp-action="Index" onclick="ch();">End</a>
+    </div><!--maincontent-->
+
+</body>

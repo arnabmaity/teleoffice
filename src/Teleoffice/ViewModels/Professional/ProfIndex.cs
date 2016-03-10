@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Teleoffice.ViewModels.Role
+namespace Teleoffice.ViewModels.Professional
 {
-    public class CreateViewModel
+    public class ProfIndex
     {
+        
     }
 }

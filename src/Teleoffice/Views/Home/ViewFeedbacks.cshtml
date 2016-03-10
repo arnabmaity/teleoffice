@@ -1,0 +1,37 @@
+﻿@using Teleoffice.Models
+
+    @{
+        ViewData["Title"] = "Feedbacks";
+        int count = 1;
+    }
+<br>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Feedbacks</h3>
+    </div>
+        <div class="panel-body">
+            @if(ViewBag.fb.Count > 0)
+            {
+                <ul class="list-group">
+                    @foreach (var n in ViewBag.fb)
+                    {
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-sm-10">
+                                    @count.  Feedback: @n.Message<br>
+                                    Name: @n.Name   <br> Email:  @n.Email                               
+                                </div>
+                            </div>
+                        </li>
+                        count = count + 1;
+                    }
+                </ul>
+
+            }
+            else
+            {
+               <div>No feedbacks yet!!!</div>
+
+            }
+        </div>
+</div>

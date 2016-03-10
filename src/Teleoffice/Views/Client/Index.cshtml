@@ -1,75 +1,59 @@
 ﻿@using Teleoffice.Models
-@model IEnumerable<Teleoffice.ViewModels.AppUserViewModel>
-@ViewBag
+
 
 @{
     ViewData["Title"] = "Client";
 }
-<h3>Welcome @ViewBag.user.FirstName @ViewBag.user.LastName</h3>
+<br>
+<h3>Welcome @ViewBag.user.FirstName @ViewBag.user.LastName</h3><br>
 
 <div class="row">
     <div class="col-sm-7">
-        <h4>Your Appointments</h4>
+        
         <div class="panel panel-default">
             <div class="panel-body">
-    @*@if (Model.prof.Count > 0)
-    {
-        <ul class="list-group">
 
-            @foreach (var p in Model.prof)
-            {
-            
-                <li class="list-group-item notif">
-                    <div class="row">
-                        <div class="col-sm-12">
-                           <p class="text-center">Your appointment is fixed with @p.FirstName @p.LastName on @* @a.MeetingTime<br />
-                        </div>
-                        </div>
-                    </li>
-                }
-                      
-            </ul>
-    }*@
-
-@if (Model.Count() > 0)
-{
-    <ul class="list-group">
-
-        @foreach (var p in Model)
-        {             
-            <li class="list-group-item notif">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <p class="text-center">
-                            @p.Subject<br />
-                            @p.FName @p.LName
-                        @Html.ActionLink("Attend", "Index", "VideoCall", new { id = @p.AppId }, new { @class = "btn btn-default" })
+                
+    @Html.ActionLink("View Your Appointments", "ViewAppointments", "Client", new { id = "None"}, new { @class = "btn btn-default" })
                 </div>
             </div>
-        </li>
-        }
 
-    </ul>
-}
-else {
-                <p class="text-center" > No appointments found</p>
-                    }
-                    </div>
-        </div>
-                                                <form asp-controller="Client" asp-action="CreateAppointment" method="get">
+        <div><br>
+        <h4>    @Html.ActionLink("View details about Professionals of this firm", "CallRate", "Client", new { id = "None" }, new { @class = "link" })</h4>
+        </div><br><br><br>
+
+                                       <form asp-controller="Client" asp-action="CreateAppointment" method="get">
                                                     <div class="form-group">
-                                                        <label for="ProfessionalId">Whom to book appointment with?</label>
+                                                        <label for="ProfessionalId">Want to book appointment with Professional?</label>
                                                         <select class="form-control" name="ProfId">
                                                             @foreach (var pro in ViewBag.pros)
-                    {
+                                                                {
                                                                 <option value="@pro.Id">@pro.FirstName @pro.LastName</option>
 
                                                             }
                                                         </select>
                                                     </div>
                                                     <button class="btn btn-default btn-primary">Book Appointment</button>
-                                                </form>
+                                                </form><br><br>
+
+        @*<form asp-controller="Client" asp-action="CreateAppointment" method="get">
+            <div class="form-group">
+                <label for="ProfessionalId">Want to book appointment with Assistant?</label>
+                <select class="form-control" name="ProfId">
+                    @foreach (var ast in ViewBag.assist)
+                    {
+                        <option value="@ast.Id">@ast.FirstName @ast.LastName</option>
+
+                    }
+                </select>
+            </div>
+            <button class="btn btn-default btn-primary">Book Appointment</button>
+        </form>*@
+       
 </div>
+
+    
+
     <div class="col-sm-5">
         <div class="panel panel-default">
             <div class="panel-heading">Notifications</div>
@@ -80,24 +64,17 @@ else {
 
                         @foreach (var n in ViewBag.notify)
                 {
-                            <li class="list-group-item notification-li">
-                                <div class="row">
-                                    <div class="col-sm-10">
-                                        @n.Message<br /><em>@n.ReceivedTime</em>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        @Html.ActionLink("X", "Read", "Notification", new { id = @n.Id }, new { @class = "btn btn-default notification-read" })
-                                    </div>
-
-                                    
-                                    @if (n.IsApproved == 2)
-                                    {
-                                    <br>@Html.ActionLink("Agree", "Agree", "Client", new { id = @n.Id }, new { @class = "btn btn-default" })
-                                        @Html.ActionLink("Request Again", "RequestAgain", "Client", new { id = n.Id }, new {@class = "btn btn-primary" })
-                                    }
-                                </div>
+                            <li class="list-group-item notification-li">                                
+                                    <div class="row">
+                                        <div class="col-sm-10">
+                                            @Html.ActionLink((string)@n.Message, "NotificationDetail", "Client", new { id = @n.Id }, new { @class = "detail" })
+                                            <br><em>@n.ReceivedTime</em>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            @Html.ActionLink("X", "Read", "Notification", new { id = @n.Id }, new { @class = "btn btn-default notification-read" })
+                                        </div>
+                                    </div>                      
                             </li>
-
                         }
                     </ul>
                 }
@@ -105,7 +82,7 @@ else {
                     <p class="text-center">No new notification!</p>
 
                 }
-                @Html.ActionLink("View All", "Index", "Notification", new { id = "None" }, new { @class = "btn btn-default" })
+                @*@Html.ActionLink("View All", "Index", "Notification", new { id = "None" }, new { @class = "btn btn-default" })*@
 
             </div>
         </div>
